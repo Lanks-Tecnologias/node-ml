@@ -1,0 +1,16 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 507b5ca..a21b837 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,9 +23,9 @@ option(ENCODEC_BUILD_EXAMPLES "encodec: build examples" ${ENCODEC_STANDALONE})
+ # Build libraries
+ 
+ set(ENCODEC_LIB encodec)
+-option(BUILD_SHARED_LIBS "build shared libraries" OFF)
++option(BUILD_SHARED_LIBS "build shared libraries" ON)
+ 
+-add_subdirectory(ggml)
++#add_subdirectory(ggml)
+ 
+ add_library(
+     ${ENCODEC_LIB}

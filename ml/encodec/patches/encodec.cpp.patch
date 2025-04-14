@@ -1,0 +1,22 @@
+diff --git a/encodec.cpp b/encodec.cpp
+index 17d2690..62628d1 100644
+--- a/encodec.cpp
++++ b/encodec.cpp
+@@ -1,7 +1,7 @@
+ #include "ggml-alloc.h"
+ #include "ggml-backend.h"
+ #include "ggml.h"
+-#include "ggml/src/ggml-impl.h"
++#include "ggml-impl.h"
+ 
+ #ifdef GGML_USE_CUBLAS
+ #include "ggml-cuda.h"
+@@ -25,6 +25,8 @@
+ 
+ #include "encodec.h"
+ 
++#include <ggml-cpu.h>
++
+ #include "decoder.h"
+ #include "encoder.h"
+ #include "lstm.h"

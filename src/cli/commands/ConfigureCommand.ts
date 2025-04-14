@@ -79,9 +79,10 @@ async function configureLlama(currentDir: string) {
 }
 
 async function configureStableDiffusion(currentDir: string) {
-    const whisperDir = `${currentDir}/ml/stable-diffusion`;
-    const repoDir = `${whisperDir}/stable-diffusion.cpp`;
-    await initializeRepo(repoDir, STABLE_DIFFUSION_REPO_URL, "main");
+    const stableDiffusionDir = `${currentDir}/ml/stable-diffusion`;
+    const repoDir = `${stableDiffusionDir}/stable-diffusion.cpp`;
+    await initializeRepo(repoDir, STABLE_DIFFUSION_REPO_URL, "master");
+    await applyPatchesFromDir(stableDiffusionDir, repoDir);
 }
 
 export const ConfigureCommand: CommandModule<object, ConfigureCommandArgs> = {

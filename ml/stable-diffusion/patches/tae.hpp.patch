@@ -1,0 +1,13 @@
+diff --git a/tae.hpp b/tae.hpp
+index c458b87..4c822ea 100644
+--- a/tae.hpp
++++ b/tae.hpp
+@@ -149,7 +149,7 @@ public:
+                 if (i == 1) {
+                     h = ggml_relu_inplace(ctx, h);
+                 } else {
+-                    h = ggml_upscale(ctx, h, 2);
++                    h = ggml_upscale(ctx, h, 2, ggml_scale_mode::GGML_SCALE_MODE_NEAREST);
+                 }
+                 continue;
+             }
