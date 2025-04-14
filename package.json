@@ -1,0 +1,55 @@
+{
+  "name": "node-ml",
+  "version": "0.0.0",
+  "description": "Create and Run AI models locally on your machine",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.json --force",
+    "clean": "rm -rf ./node_modules ./dist",
+    "configure": "npm install && npm run build",
+    "reset-submodules": "rm .gitmodules && git rm -f --cached ./ml/ggml/ggml && git rm -f --cached ./ml/encodec/encodec.cpp && git rm -f --cached ./ml/bark/bark.cpp && git rm -f --cached ./ml/whisper/whisper.cpp && git rm -f --cached ./ml/llama/llama.cpp && git rm -f --cached ./ml/stable-diffusion/stable-diffusion.cpp",
+    "reset": "rm -rf ./ml/ggml/ggml ./ml/encodec/encodec.cpp ./ml/bark/bark.cpp ./ml/whisper/whisper.cpp ./ml/llama/llama.cpp ./ml/stable-diffusion/stable-diffusion.cpp",
+    "test": "node ./dist/test.js",
+    "watch": "tsc --build tsconfig.json --watch --force"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lanks-Tecnologias/node-ml.git"
+  },
+  "keywords": [
+    "ggml",
+    "llama.cpp",
+    "llama-cpp",
+    "encodec.cpp",
+    "encodec-cpp",
+    "stable-diffusion.cpp",
+    "stable-diffusion-cpp",
+    "vulkan",
+    "metal",
+    "cuda",
+    "embedding",
+    "bark",
+    "bert",
+    "whisper"
+  ],
+  "author": "Lanks Technologias",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Lanks-Tecnologias/node-ml/issues"
+  },
+  "homepage": "https://github.com/Lanks-Tecnologias/node-ml#readme",
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "@types/yargs": "^17.0.33",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "cmake-js": "^7.3.0",
+    "fs-extra": "^11.3.0",
+    "process": "^0.11.10",
+    "simple-git": "^3.27.0",
+    "yargs": "^17.7.2"
+  }
+}

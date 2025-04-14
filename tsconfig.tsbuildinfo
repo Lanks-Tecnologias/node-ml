@@ -1,0 +1,1 @@
+{"root":["./src/types.ts","./src/cli/cli.ts","./src/cli/commands/ConfigureCommand.ts","./src/cli/commands/DownloadCommand.ts"],"version":"5.8.3"}

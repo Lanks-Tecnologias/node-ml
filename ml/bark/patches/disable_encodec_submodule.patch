@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9db17c6..9124358 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,7 +18,7 @@ endif()
+ 
+ set(BARK_LIB bark)
+ 
+-add_subdirectory(encodec.cpp)
++#add_subdirectory(encodec.cpp)
+ 
+ add_definitions(-DEXPORTING_BARK)
+ 
