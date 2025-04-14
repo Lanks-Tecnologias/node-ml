@@ -41,7 +41,11 @@ async function applyPatchesFromDir(currentDir: string, repoDir: string) {
     for (const patchFile of patchFiles) {
         const patchPath = `${patchDir}/${patchFile}`;
         console.log(`Applying patch: ${patchPath}`);
-        await simpleGit(repoDir).applyPatch(patchPath, {"--reject": null, "--whitespace": "fix"});
+        try {
+            await simpleGit(repoDir).applyPatch(patchPath, {"--reject": null, "--whitespace": "fix"});
+        }catch (e) {
+            console.error(e)
+        }
     }
 }
 

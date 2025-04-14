@@ -1,0 +1,15 @@
+[submodule "/home/denis.montes/WebstormProjects/node-ml/ml/ggml/ggml"]
+	path = /home/denis.montes/WebstormProjects/node-ml/ml/ggml/ggml
+	url = https://github.com/ggml-org/ggml.git
+[submodule "/home/denis.montes/WebstormProjects/node-ml/ml/encodec/encodec.cpp"]
+	path = /home/denis.montes/WebstormProjects/node-ml/ml/encodec/encodec.cpp
+	url = https://github.com/PABannier/encodec.cpp.git
+[submodule "/home/denis.montes/WebstormProjects/node-ml/ml/bark/bark.cpp"]
+	path = /home/denis.montes/WebstormProjects/node-ml/ml/bark/bark.cpp
+	url = https://github.com/PABannier/bark.cpp.git
+[submodule "/home/denis.montes/WebstormProjects/node-ml/ml/whisper/whisper.cpp"]
+	path = /home/denis.montes/WebstormProjects/node-ml/ml/whisper/whisper.cpp
+	url = https://github.com/ggml-org/whisper.cpp.git
+[submodule "/home/denis.montes/WebstormProjects/node-ml/ml/stable-diffusion/stable-diffusion.cpp"]
+	path = /home/denis.montes/WebstormProjects/node-ml/ml/stable-diffusion/stable-diffusion.cpp
+	url = https://github.com/leejet/stable-diffusion.cpp.git

@@ -1,1 +1,5 @@
-build/*
+build/
+ggml/ggml/
+encodec/encodec.cpp
+stable-diffusion/stable-diffusion.cpp
+whisper/whisper.cpp
