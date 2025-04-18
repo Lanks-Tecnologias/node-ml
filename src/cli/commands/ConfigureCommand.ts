@@ -3,7 +3,9 @@ import {ResetMode, simpleGit} from "simple-git";
 import fs from 'node:fs';
 import {exec} from "node:child_process";
 
-export type ConfigureCommandArgs = {}
+export type ConfigureCommandArgs = {
+    debug: boolean
+}
 // Constants for repository URLs
 const GGML_REPO_URL = "https://github.com/ggml-org/ggml.git";
 const ENCODEC_REPO_URL = "https://github.com/PABannier/encodec.cpp.git";
@@ -88,8 +90,16 @@ async function configureStableDiffusion(currentDir: string) {
 export const ConfigureCommand: CommandModule<object, ConfigureCommandArgs> = {
     command: 'configure',
     describe: 'Configure the workspace to build all packages',
-    builder: (yargs) => yargs,
-    handler: async () => {
+    builder(yargs) {
+        return yargs
+            .option('debug', {
+                type: "boolean",
+                default: false,
+                alias: ['d'],
+                describe: 'Set debug build type'
+            })
+    },
+    handler: async (args) => {
         const currentDir = process.cwd();
         console.log(`Configuring workspace in ${currentDir}`);
         if (!fs.existsSync(`${currentDir}/.gitmodules`)){
@@ -104,15 +114,29 @@ export const ConfigureCommand: CommandModule<object, ConfigureCommandArgs> = {
         await configureStableDiffusion(currentDir);
 
         // Run cmake-js configuration
-        const cmakeConfigure = `npx cmake-js configure -d ${currentDir}/ml`;
-        console.log(cmakeConfigure);
 
-        exec(cmakeConfigure, (error, stdout) => {
-            if (error) {
-                console.error(`CMake configuration error: ${error.message}`);
-                return;
-            }
-            console.log(`CMake configuration output:\n${stdout}`);
-        });
+        if (args.debug){
+            const cmakeConfigureDebug = `npx cmake-js configure -D -d ${currentDir}/ml -O ${currentDir}/ml/build`;
+
+            exec(cmakeConfigureDebug, (error, stdout) => {
+                if (error) {
+                    console.error(`CMake configuration error: ${error.message}`);
+                    return;
+                }
+                console.log(`CMake configuration output:\n${stdout}`);
+            });
+
+        } else {
+            const cmakeConfigureRelease = `npx cmake-js configure -d ${currentDir}/ml -O ${currentDir}/ml/build`;
+
+            exec(cmakeConfigureRelease, (error, stdout) => {
+                if (error) {
+                    console.error(`CMake configuration error: ${error.message}`);
+                    return;
+                }
+                console.log(`CMake configuration output:\n${stdout}`);
+            });
+        }
+
     }
 };

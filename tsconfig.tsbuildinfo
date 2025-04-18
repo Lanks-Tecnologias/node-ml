@@ -1,1 +1,1 @@
-{"root":["./src/types.ts","./src/cli/cli.ts","./src/cli/commands/ConfigureCommand.ts","./src/cli/commands/DownloadCommand.ts"],"version":"5.8.3"}
+{"root":["./src/types.ts","./src/cli/cli.ts","./src/cli/commands/BuildCommand.ts","./src/cli/commands/CleanCommand.ts","./src/cli/commands/ConfigureCommand.ts","./src/cli/commands/DownloadCommand.ts"],"version":"5.8.3"}

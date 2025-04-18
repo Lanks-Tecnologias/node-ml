@@ -2,10 +2,12 @@ import yargs from "yargs"
 import {DownloadCommand} from "./commands/DownloadCommand.js";
 import {hideBin} from "yargs/helpers";
 import {ConfigureCommand} from "./commands/ConfigureCommand.js";
+import {BuildCommand} from "./commands/BuildCommand.js";
 
 const yarg =  yargs(hideBin(process.argv));
 
 yarg
+    .command(BuildCommand)
     .command(ConfigureCommand)
     .command(DownloadCommand)
     .recommendCommands()

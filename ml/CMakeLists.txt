@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14) # for add_link_options and implicit target directories.
-project("ml" C CXX)
+project(ml C CXX)
 set(GGML_VULKAN ON)
 set(BUILD_SHARED_LIBS_DEFAULT ON)
 #set(SD_VULKAN ON)
@@ -8,6 +8,11 @@ set(BUILD_SHARED_LIBS ON)
 #set(GGML_CUDA ON)
 #set(SD_CUDA ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+execute_process(COMMAND node -p "require('node-addon-api').include.slice(1,-1)"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE NODE_ADDON_API_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+include_directories(${NODE_ADDON_API_DIR} ${CMAKE_JS_INC})
 
 add_subdirectory(ggml)
 add_subdirectory(encodec)
@@ -16,9 +21,46 @@ add_subdirectory(whisper)
 add_subdirectory(llama)
 add_subdirectory(stable-diffusion)
 
-target_include_directories(encodec PUBLIC
-        ${CMAKE_SOURCE_DIR}/ggml/ggml/include
-        ${CMAKE_SOURCE_DIR}/ggml/ggml/src
+set(SOURCES
+        addon/addon.cpp
+        addon/ggml/GGMLBackendDevice.cpp
+        addon/ggml/GGMLSession.cpp
+        addon/ggml/GGMLBackend.cpp
+        addon/ggml/GGML.cpp
+        addon/ggml/GGMLBackendDevice.h
+        addon/ggml/GGML.h
 )
+
+file(GLOB ML_SOURCES
+        "*.h"
+        "*.cpp"
+        "*.hpp"
+)
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
+# Nome da lib que será carregada pelo require()
+set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
+#target_link_libraries(${PROJECT_NAME} PUBLIC
+#        ggml
+#        llama
+#        ${SD_LIB}
+#        ${ENCODEC_LIB}
+#        ${BARK_LIB}
+#        whisper
+#)
+#add_executable(${PROJECT_NAME} ${SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_JS_INC}
+        ggml/ggml/src
+        ggml/ggml/include
+)
+target_link_libraries(${PROJECT_NAME}
+        ${CMAKE_JS_LIB}
+        ggml
+        llama
+        ${SD_LIB}
+        whisper
+        ${BARK_LIB}
+)
+
 
 
