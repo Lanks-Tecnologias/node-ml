@@ -23,12 +23,18 @@ add_subdirectory(stable-diffusion)
 
 set(SOURCES
         addon/addon.cpp
-        addon/ggml/GGMLBackendDevice.cpp
+        addon/ggml/BackendDevice.cpp
         addon/ggml/GGMLSession.cpp
-        addon/ggml/GGMLBackend.cpp
+        addon/ggml/Backend.cpp
         addon/ggml/GGML.cpp
-        addon/ggml/GGMLBackendDevice.h
+        addon/ggml/BackendDevice.h
         addon/ggml/GGML.h
+        addon/ggml/InitParams.cpp
+        addon/ggml/InitParams.h
+        addon/ggml/Context.cpp
+        addon/ggml/Context.h
+        addon/ggml/CGraph.cpp
+        addon/ggml/CGraph.h
 )
 
 file(GLOB ML_SOURCES

@@ -5,12 +5,18 @@
 #include <node.h>
 
 #include "ggml/GGML.h"
-#include "ggml/GGMLBackendDevice.h"
+#include "ggml/BackendDevice.h"
+#include "ggml/CGraph.h"
+#include "ggml/Context.h"
+#include "ggml/InitParams.h"
 
 Napi::Object  Initialize(Napi::Env env, Napi::Object exports) {
     //NODE_SET_METHOD(exports, "hello", Method);
     GGML::Init(env, exports);
-    GGMLBackendDevice::Init(env, exports);
+    BackendDevice::Init(env, exports);
+    InitParams::Init(env, exports);
+    Context::Init(env, exports);
+    CGraph::Init(env, exports);
     return exports;
 }
 
