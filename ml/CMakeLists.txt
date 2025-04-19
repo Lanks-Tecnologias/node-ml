@@ -5,7 +5,7 @@ set(BUILD_SHARED_LIBS_DEFAULT ON)
 #set(SD_VULKAN ON)
 #set(SD_BUILD_SHARED_LIBS ON)
 set(BUILD_SHARED_LIBS ON)
-#set(GGML_CUDA ON)
+set(GGML_CUDA ON)
 #set(SD_CUDA ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 execute_process(COMMAND node -p "require('node-addon-api').include.slice(1,-1)"
@@ -15,11 +15,11 @@ execute_process(COMMAND node -p "require('node-addon-api').include.slice(1,-1)"
 include_directories(${NODE_ADDON_API_DIR} ${CMAKE_JS_INC})
 
 add_subdirectory(ggml)
-add_subdirectory(encodec)
-add_subdirectory(bark)
-add_subdirectory(whisper)
+#add_subdirectory(encodec)
+#add_subdirectory(bark)
+#add_subdirectory(whisper)
 add_subdirectory(llama)
-add_subdirectory(stable-diffusion)
+#add_subdirectory(stable-diffusion)
 
 set(SOURCES
         addon/addon.cpp
@@ -37,6 +37,9 @@ set(SOURCES
         addon/ggml/CGraph.h
         addon/ggml/Tensor.cpp
         addon/ggml/Tensor.h
+        addon/ggml/GraphPlan.cpp
+        addon/ggml/GraphPlan.h
+        addon/ggml/Backend.h
 )
 
 file(GLOB ML_SOURCES
@@ -66,8 +69,8 @@ target_link_libraries(${PROJECT_NAME}
         ggml
         llama
         ${SD_LIB}
-        whisper
-        ${BARK_LIB}
+        #whisper
+       # ${BARK_LIB}
 )
 
 

@@ -70,3 +70,28 @@ Napi::Value Tensor::GetOp(const Napi::CallbackInfo& info)
 {
     return Napi::Number::New(info.Env(), this->tensor->op);
 }
+
+Napi::Value Tensor::GetOpParams(const Napi::CallbackInfo& info)
+{
+    return Napi::Object::New(info.Env());
+}
+
+Napi::Value Tensor::GetFlags(const Napi::CallbackInfo& info)
+{
+    return Napi::Object::New(info.Env());
+}
+
+Napi::Value Tensor::GetSrc(const Napi::CallbackInfo& info)
+{
+    return Napi::Object::New(info.Env());
+}
+
+Napi::Value Tensor::GetViewSrc(const Napi::CallbackInfo& info)
+{
+    return Napi::Object::New(info.Env());
+}
+
+Napi::Value Tensor::GetViewOffs(const Napi::CallbackInfo& info)
+{
+    return Napi::Object::New(info.Env());
+}

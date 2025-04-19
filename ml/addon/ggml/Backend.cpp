@@ -1,38 +1,16 @@
-#include <napi.h>
+#include "Backend.h"
 
+#include "BackendDevice.h"
 #include "CGraph.h"
-#include "ggml-backend.h"
+
+
 //
+
 // Created by denis.montes on 17/04/25.
+
 //
-class Backend : public Napi::ObjectWrap<Backend>
-{
-public:
-    static Napi::FunctionReference constructor;
-    static void Init(Napi::Env env, Napi::Object exports);
-    Backend(const Napi::CallbackInfo& info);
-    ~Backend();
-    ggml_backend_t backend = nullptr;
-    ggml_backend_buffer_type_t buffer_type = nullptr;
-    ggml_backend_dev_t dev = nullptr;
-    Napi::Value GetGuid(const Napi::CallbackInfo& info);
-    Napi::Value GetName(const Napi::CallbackInfo& info);
-    Napi::Value GetDefaultBufferType(const Napi::CallbackInfo& info);
-    Napi::Value GetAllocBuffer(const Napi::CallbackInfo& info);
-    void SetTensorAsync(const Napi::CallbackInfo& info);
-    void GetTensorAsync(const Napi::CallbackInfo& info);
-    void SetTensor(const Napi::CallbackInfo& info);
-    void GetTensor(const Napi::CallbackInfo& info);
-    Napi::Value GetAlignment(const Napi::CallbackInfo& info);
-    Napi::Value GetMaxSize(const Napi::CallbackInfo& info);
-    void Memset(const Napi::CallbackInfo& info);
-    void Synchronize(const Napi::CallbackInfo& info);
-    Napi::Value CreateGraphPlan(const Napi::CallbackInfo& info);
-    void FreeGraphPlan(const Napi::CallbackInfo& info);
-    Napi::Value ComputePlan(const Napi::CallbackInfo& info);
-    Napi::Value ComputeGraph(const Napi::CallbackInfo& info);
-    Napi::Value ComputeGraphAsync(const Napi::CallbackInfo& info);
-};
+
+
 
 Napi::FunctionReference Backend::constructor;
 
@@ -45,6 +23,7 @@ void Backend::Init(Napi::Env env, Napi::Object exports)
             InstanceAccessor("allocBuffer", &Backend::GetAllocBuffer, nullptr),
             InstanceAccessor("alignment", &Backend::GetAlignment, nullptr),
             InstanceAccessor("maxSize", &Backend::GetMaxSize, nullptr),
+            InstanceAccessor("device", &Backend::GetDevice, nullptr),
             InstanceMethod("setTensorAsync", &Backend::SetTensorAsync),
             InstanceMethod("getTensorAsync", &Backend::GetTensorAsync),
             InstanceMethod("setTensor", &Backend::SetTensor),
@@ -138,12 +117,18 @@ Napi::Value Backend::CreateGraphPlan(const Napi::CallbackInfo& info)
 
 void Backend::FreeGraphPlan(const Napi::CallbackInfo& info)
 {
-    ggml_backend_graph_plan_free(backend, nullptr);
+    const auto cgraphObj = info[0].As<Napi::Object>(); // [ cgraph
+    const auto cgraph = Napi::ObjectWrap<CGraph>::Unwrap(cgraphObj);
+    ggml_backend_graph_plan_free(backend, cgraph->graph);
 }
 
 Napi::Value Backend::ComputePlan(const Napi::CallbackInfo& info)
 {
-return Napi::Object::New(info.Env());
+    const auto cgraphObj = info[0].As<Napi::Object>(); // [ cgraph
+    const auto cgraph = Napi::ObjectWrap<CGraph>::Unwrap(cgraphObj);
+
+    const auto status = ggml_backend_graph_plan_compute(backend, cgraph->graph);
+    return Napi::Number::New(info.Env(), status);
 }
 
 Napi::Value Backend::ComputeGraph(const Napi::CallbackInfo& info)
@@ -160,4 +145,15 @@ Napi::Value Backend::ComputeGraphAsync(const Napi::CallbackInfo& info)
     const auto cgraph = Napi::ObjectWrap<CGraph>::Unwrap(cgraphObj);
     const auto status = ggml_backend_graph_compute_async(backend, cgraph->graph);
     return Napi::Number::New(info.Env(), status);
+}
+
+Napi::Value Backend::GetDevice(const Napi::CallbackInfo& info)
+{
+    const auto dev_t = ggml_backend_get_device(backend);
+    const auto devObj = BackendDevice::constructor.New({});
+    const auto devWrapper = Napi::ObjectWrap<BackendDevice>::Unwrap(devObj);
+    devWrapper->backend = backend;
+    devWrapper->dev = dev_t;
+
+    return devObj;
 }
