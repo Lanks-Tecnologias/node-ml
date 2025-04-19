@@ -9,6 +9,7 @@
 #include "ggml/CGraph.h"
 #include "ggml/Context.h"
 #include "ggml/InitParams.h"
+#include "ggml/Tensor.h"
 
 Napi::Object  Initialize(Napi::Env env, Napi::Object exports) {
     //NODE_SET_METHOD(exports, "hello", Method);
@@ -17,6 +18,7 @@ Napi::Object  Initialize(Napi::Env env, Napi::Object exports) {
     InitParams::Init(env, exports);
     Context::Init(env, exports);
     CGraph::Init(env, exports);
+    Tensor::Init(env, exports);
     return exports;
 }
 

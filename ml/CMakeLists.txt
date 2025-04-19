@@ -35,6 +35,8 @@ set(SOURCES
         addon/ggml/Context.h
         addon/ggml/CGraph.cpp
         addon/ggml/CGraph.h
+        addon/ggml/Tensor.cpp
+        addon/ggml/Tensor.h
 )
 
 file(GLOB ML_SOURCES

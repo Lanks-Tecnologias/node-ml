@@ -74,4 +74,10 @@ void GGML::Init(Napi::Env env, Napi::Object exports)
         cgraph->graph = grafo;
         return cgraphObj;
     }));
+
+    exports.Set("getDeviceCount", Napi::Function::New(env, [](const Napi::CallbackInfo& info)
+    {
+        const Napi::Env env = info.Env();
+        return Napi::Number::New(env, static_cast<double>(ggml_backend_dev_count()));
+    }));
 }
