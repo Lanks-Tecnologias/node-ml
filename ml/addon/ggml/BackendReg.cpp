@@ -32,11 +32,13 @@ BackendReg::BackendReg(const Napi::CallbackInfo& info): Napi::ObjectWrap<Backend
 
 Napi::Value BackendReg::GetName(const Napi::CallbackInfo& info)
 {
+    printf("BackendReg::GetName\n");
     return Napi::String::New(info.Env(), ggml_backend_reg_name(backendReg));
 }
 
 Napi::Value BackendReg::GetDevice(const Napi::CallbackInfo& info)
 {
+    printf("BackendReg::GetDevice\n");
     const auto index = static_cast<size_t>(info[0].As<Napi::Number>().Uint32Value());
     const auto devObj = BackendDevice::constructor.New({});
     const auto devWrap = Napi::ObjectWrap<BackendDevice>::Unwrap(devObj);
@@ -46,5 +48,6 @@ Napi::Value BackendReg::GetDevice(const Napi::CallbackInfo& info)
 
 Napi::Value BackendReg::GetDeviceCount(const Napi::CallbackInfo& info)
 {
+    printf("BackendReg::GetDeviceCount\n");
     return Napi::Number::New(info.Env(), static_cast<double>(ggml_backend_reg_dev_count(backendReg)));
 }

@@ -7,7 +7,8 @@ function buildGraph(){
     try {
         const ctx = ml.init({memSize: 66192, noAlloc: true})
         const gf = ctx.createNewGraph()
-        let tensor = new ml.Tensor()
+        // let tensor = new ml.Tensor()
+        // gf.buildForwardExpand(tensor)
         ml.free(ctx)
     }catch (e) {
         console.log(e)
@@ -18,7 +19,12 @@ ml.loadAllBackends()
 let count = ml.getDeviceCount()
 buildGraph()
 for (let i = 0; i < count; i++) {
-    const device = ml.getDevice(i)
-    const {free, total} = device.memory
-    console.log(`Device ${device.name} Total Memory: ${total / 1024 / 1024 / 1024}GB Free: ${free / 1024 / 1024 / 1024}GB`);
+    try{
+        const device = ml.getDevice(i)
+        const {free, total} = device.memory
+        console.log(`Device ${device.description} Total Memory: ${total / 1024 / 1024 / 1024}GB Free: ${free / 1024 / 1024 / 1024}GB`);
+        console.log(device)
+    }catch (e) {
+        console.log(e)
+    }
 }

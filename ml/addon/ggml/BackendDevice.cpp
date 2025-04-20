@@ -56,22 +56,17 @@ Napi::Value BackendDevice::GetName(const Napi::CallbackInfo& info)
 
 Napi::Value BackendDevice::GetDescription(const Napi::CallbackInfo& info)
 {
-    const BackendDevice*  dev = GetThisInstance(info);
-    return Napi::String::New(info.Env(), ggml_backend_dev_description(dev->dev));
+    return Napi::String::New(info.Env(), ggml_backend_dev_description(dev));
 }
 
-BackendDevice* BackendDevice::GetThisInstance(const Napi::CallbackInfo& info)
-{
-    const auto obj = info.This().As<Napi::Object>();
-    return Napi::ObjectWrap<BackendDevice>::Unwrap(obj);
-}
+
 
 Napi::Value BackendDevice::GetMemory(const Napi::CallbackInfo& info)
 {
-    const BackendDevice*  dev = GetThisInstance(info);
+
     size_t free = 0;
     size_t total = 0;
-    dev->dev->iface.get_memory(dev->dev, &free, &total);
+    dev->iface.get_memory(dev, &free, &total);
 
     const Napi::Object ret = Napi::Object::New(info.Env());
     ret.Set("free", Napi::Number::New(info.Env(), static_cast<double>(free)));
@@ -82,30 +77,27 @@ Napi::Value BackendDevice::GetMemory(const Napi::CallbackInfo& info)
 
 Napi::Value BackendDevice::GetDeviceType(const Napi::CallbackInfo& info)
 {
-    const BackendDevice*  dev = GetThisInstance(info);
-    //ggml_backend_dev_get_props(dev->dev, dev->props);
+    ggml_backend_dev_get_props(dev, &props);
     return Napi::Object::New(info.Env());
 }
 
 Napi::Value BackendDevice::GetProps(const Napi::CallbackInfo& info)
 {
-    const BackendDevice*  dev = GetThisInstance(info);
-    //dev->dev->iface.get_props(dev->dev, dev->props);
+    dev->iface.get_props(dev, &props);
     return Napi::Object::New(info.Env());
 }
 
 Napi::Value BackendDevice::InitDevice(const Napi::CallbackInfo& info)
 {
-    // const GGMLBackendDevice*  dev = GetThisInstance(info);
-    // ggml_backend_dev_get_props(dev->dev, dev->props);
+    const auto params = info[0].As<Napi::String>(); // [ props
+    ggml_backend_dev_init(dev, params.Utf8Value().c_str());
     return Napi::Object::New(info.Env());
 }
 
 Napi::Value BackendDevice::SupportsOp(const Napi::CallbackInfo& info)
 {
-    const BackendDevice*  dev = GetThisInstance(info);
     auto op = info[0].As<Napi::Object>();
-    auto supports = dev->dev->iface.supports_op(dev->dev, nullptr);
+    auto supports = dev->iface.supports_op(dev, nullptr);
     return Napi::Boolean::New(info.Env(), supports);
 }
 

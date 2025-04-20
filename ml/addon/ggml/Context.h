@@ -18,6 +18,7 @@ public:
     Napi::Value CreateNewGraphCustom(const Napi::CallbackInfo& info);
     Napi::Value DuplicateGraph(const Napi::CallbackInfo& info);
     Napi::Value MulMat(const Napi::CallbackInfo& info);
+    Napi::Value CreateTensor2D(const Napi::CallbackInfo& info);
 };
 
 

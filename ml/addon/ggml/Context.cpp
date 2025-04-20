@@ -14,6 +14,7 @@ void Context::Init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("createNewGraph", &Context::CreateNewGraph),
         InstanceMethod("createNewGraphCustom", &Context::CreateNewGraphCustom),
         InstanceMethod("duplicateGraph", &Context::DuplicateGraph),
+        InstanceMethod("createTensor2D", &Context::CreateTensor2D),
         InstanceMethod("mulMat", &Context::MulMat),
     });
     constructor = Napi::Persistent(func);
@@ -70,6 +71,19 @@ Napi::Value Context::MulMat(const Napi::CallbackInfo& info)
     const auto bWrapper = Napi::ObjectWrap<Tensor>::Unwrap(tensorBObj);
     const auto tensor = ggml_mul_mat(ctx, aWrapper->tensor, bWrapper->tensor);
 
+    const auto tensorObj = Tensor::constructor.New({});
+    const auto tensorWrapper = Napi::ObjectWrap<Tensor>::Unwrap(tensorObj);
+    tensorWrapper->tensor = tensor;
+    return tensorObj;
+}
+
+Napi::Value Context::CreateTensor2D(const Napi::CallbackInfo& info)
+{
+    const auto type = info[0].As<Napi::Number>().Uint32Value();
+    const auto cols = info[0].As<Napi::Number>().Int64Value();
+    const auto rows = info[0].As<Napi::Number>().Int64Value();
+
+    const auto tensor = ggml_new_tensor_2d(ctx, static_cast<ggml_type>(type), cols, rows);
     const auto tensorObj = Tensor::constructor.New({});
     const auto tensorWrapper = Napi::ObjectWrap<Tensor>::Unwrap(tensorObj);
     tensorWrapper->tensor = tensor;
