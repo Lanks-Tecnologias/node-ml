@@ -24,6 +24,8 @@ public:
     Napi::Value GetLeafs(const Napi::CallbackInfo& info);
     Napi::Value GetVisitedHashSet(const Napi::CallbackInfo& info);
     Napi::Value GetOrder(const Napi::CallbackInfo& info);
+    void BuildBackwardExpand(const Napi::CallbackInfo& info);
+    void BuildForwardExpand(const Napi::CallbackInfo& info);
 };
 
 

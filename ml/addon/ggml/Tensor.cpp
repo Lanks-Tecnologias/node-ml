@@ -28,12 +28,13 @@ void Tensor::Init(Napi::Env env, Napi::Object exports) {
 
 Tensor::Tensor(const Napi::CallbackInfo& info): Napi::ObjectWrap<Tensor>(info)
 {
-
+    Napi::Env env = info.Env();
+    printf("Tensor::Tensor\n");
 }
 
 Tensor::~Tensor()
 {
-
+    printf("Tensor::~Tensor\n");
 }
 
 Napi::Value Tensor::GetBuffer(const Napi::CallbackInfo& info)

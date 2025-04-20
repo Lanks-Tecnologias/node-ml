@@ -40,6 +40,8 @@ set(SOURCES
         addon/ggml/GraphPlan.cpp
         addon/ggml/GraphPlan.h
         addon/ggml/Backend.h
+        addon/ggml/BackendReg.cpp
+        addon/ggml/BackendReg.h
 )
 
 file(GLOB ML_SOURCES

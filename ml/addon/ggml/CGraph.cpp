@@ -4,6 +4,8 @@
 
 #include "CGraph.h"
 
+#include "Tensor.h"
+
 Napi::FunctionReference CGraph::constructor;
 void CGraph::Init(Napi::Env env, Napi::Object exports)
 {
@@ -17,6 +19,8 @@ void CGraph::Init(Napi::Env env, Napi::Object exports)
         InstanceAccessor("leafs", &CGraph::GetLeafs, nullptr),
         InstanceAccessor("visitedHashSet", &CGraph::GetVisitedHashSet, nullptr),
         InstanceAccessor("order", &CGraph::GetOrder, nullptr),
+
+        InstanceMethod("buildForwardExpand", &CGraph::BuildForwardExpand),
     });
 
     constructor = Napi::Persistent(func);
@@ -26,12 +30,12 @@ void CGraph::Init(Napi::Env env, Napi::Object exports)
 
 CGraph::CGraph(const Napi::CallbackInfo& info): Napi::ObjectWrap<CGraph>(info)
 {
-
+    printf("CGraph::CGraph\n");
 }
 
 CGraph::~CGraph()
 {
-
+    printf("CGraph::~CGraph\n");
 }
 
 Napi::Value CGraph::GetSize(const Napi::CallbackInfo& info)
@@ -78,4 +82,13 @@ Napi::Value CGraph::GetOrder(const Napi::CallbackInfo& info)
 {
     return Napi::Object::New(info.Env());
 }
+
+void CGraph::BuildForwardExpand(const Napi::CallbackInfo& info)
+{
+    const auto tensorObj = info[0].As<Napi::Object>();
+    const auto tensor = Napi::ObjectWrap<Tensor>::Unwrap(tensorObj);
+
+    ggml_build_forward_expand(this->graph, tensor->tensor);
+}
+
 

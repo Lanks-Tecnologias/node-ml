@@ -14,6 +14,10 @@ public:
     Context(const Napi::CallbackInfo& info);
     ~Context();
     ggml_context * ctx = nullptr;
+    Napi::Value CreateNewGraph(const Napi::CallbackInfo& info);
+    Napi::Value CreateNewGraphCustom(const Napi::CallbackInfo& info);
+    Napi::Value DuplicateGraph(const Napi::CallbackInfo& info);
+    Napi::Value MulMat(const Napi::CallbackInfo& info);
 };
 
 

@@ -17,6 +17,7 @@ class GraphPlan: public Napi::ObjectWrap<GraphPlan> {
         ~GraphPlan();
         ggml_backend_graph_plan_t plan;
         ggml_backend_t backend;
+
 };
 
 

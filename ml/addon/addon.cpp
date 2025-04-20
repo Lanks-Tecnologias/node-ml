@@ -7,6 +7,7 @@
 #include "ggml/Backend.h"
 #include "ggml/GGML.h"
 #include "ggml/BackendDevice.h"
+#include "ggml/BackendReg.h"
 #include "ggml/CGraph.h"
 #include "ggml/Context.h"
 #include "ggml/GraphPlan.h"
@@ -17,6 +18,7 @@ Napi::Object  Initialize(Napi::Env env, Napi::Object exports) {
     //NODE_SET_METHOD(exports, "hello", Method);
     GGML::Init(env, exports);
     GraphPlan::Init(env, exports);
+    BackendReg::Init(env, exports);
     BackendDevice::Init(env, exports);
     Backend::Init(env, exports);
     InitParams::Init(env, exports);

@@ -5,11 +5,14 @@
 
 #include <ggml-backend-impl.h>
 
+#include "BackendReg.h"
+
 Napi::FunctionReference BackendDevice::constructor;
 
 
 void BackendDevice::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "BackendDevice", {
+        InstanceAccessor("backendRegister", &BackendDevice::GetBackendReg, nullptr),
       InstanceAccessor("name", &BackendDevice::GetName, nullptr),
       InstanceAccessor("description", &BackendDevice::GetDescription, nullptr),
       InstanceAccessor("memory", &BackendDevice::GetMemory, nullptr),
@@ -32,10 +35,13 @@ void BackendDevice::Init(Napi::Env env, Napi::Object exports) {
 
 BackendDevice::BackendDevice(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<BackendDevice>(info)
-{}
+{
+    printf("BackendDevice::BackendDevice\n");
+}
 
 BackendDevice::~BackendDevice() {
     // Backends geralmente não precisam de free
+    printf("BackendDevice::~BackendDevice\n");
 }
 
 Napi::Value BackendDevice::GetType(const Napi::CallbackInfo& info) {
@@ -131,4 +137,13 @@ Napi::Value BackendDevice::GetHostBufferType(const Napi::CallbackInfo& info)
 Napi::Value BackendDevice::GetBufferFromHostPtr(const Napi::CallbackInfo& info)
 {
     return Napi::Object::New(info.Env());
+}
+
+Napi::Value BackendDevice::GetBackendReg(const Napi::CallbackInfo& info)
+{
+    const auto backendRegObj = BackendReg::constructor.New({});
+    const auto backendRegWrapper = Napi::ObjectWrap<BackendReg>::Unwrap(backendRegObj);
+    backendRegWrapper->backendReg = ggml_backend_dev_backend_reg(dev);
+    return backendRegObj;
+
 }
