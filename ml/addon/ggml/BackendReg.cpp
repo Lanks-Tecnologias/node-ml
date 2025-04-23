@@ -4,7 +4,7 @@
 
 #include "BackendReg.h"
 
-#include "BackendDevice.h"
+#include "Device.h"
 
 Napi::FunctionReference BackendReg::constructor;
 
@@ -40,8 +40,8 @@ Napi::Value BackendReg::GetDevice(const Napi::CallbackInfo& info)
 {
     printf("BackendReg::GetDevice\n");
     const auto index = static_cast<size_t>(info[0].As<Napi::Number>().Uint32Value());
-    const auto devObj = BackendDevice::constructor.New({});
-    const auto devWrap = Napi::ObjectWrap<BackendDevice>::Unwrap(devObj);
+    const auto devObj = Device::constructor.New({});
+    const auto devWrap = Napi::ObjectWrap<Device>::Unwrap(devObj);
     devWrap->dev = ggml_backend_reg_dev_get(backendReg, index);
     return devObj;
 }

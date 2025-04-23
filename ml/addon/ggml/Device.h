@@ -9,13 +9,13 @@
 #include "ggml-backend.h"
 
 
-class BackendDevice: public Napi::ObjectWrap<BackendDevice>
+class Device: public Napi::ObjectWrap<Device>
 {
 public:
     static Napi::FunctionReference constructor;
     static void Init(Napi::Env env, Napi::Object exports);
-    BackendDevice(const Napi::CallbackInfo& info);
-    ~BackendDevice();
+    Device(const Napi::CallbackInfo& info);
+    ~Device();
     ggml_backend_t backend = nullptr;
     ggml_backend_buffer_type_t buffer_type = nullptr;
     ggml_backend_dev_t dev = nullptr;
@@ -24,7 +24,7 @@ private:
     Napi::Value GetType(const Napi::CallbackInfo& info);
     Napi::Value GetName(const Napi::CallbackInfo& info);
     Napi::Value GetDescription(const Napi::CallbackInfo& info);
-    BackendDevice*  GetThisInstance(const Napi::CallbackInfo& info);
+    Device*  GetThisInstance(const Napi::CallbackInfo& info);
     Napi::Value GetMemory(const Napi::CallbackInfo& info);
     Napi::Value GetDeviceType(const Napi::CallbackInfo& info);
     Napi::Value GetProps(const Napi::CallbackInfo& info);

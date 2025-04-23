@@ -23,11 +23,11 @@ add_subdirectory(llama)
 
 set(SOURCES
         addon/addon.cpp
-        addon/ggml/BackendDevice.cpp
+        addon/ggml/Device.cpp
         addon/ggml/GGMLSession.cpp
         addon/ggml/Backend.cpp
         addon/ggml/GGML.cpp
-        addon/ggml/BackendDevice.h
+        addon/ggml/Device.h
         addon/ggml/GGML.h
         addon/ggml/InitParams.cpp
         addon/ggml/InitParams.h
@@ -42,6 +42,12 @@ set(SOURCES
         addon/ggml/Backend.h
         addon/ggml/BackendReg.cpp
         addon/ggml/BackendReg.h
+        addon/ggml/Scheduler.cpp
+        addon/ggml/Scheduler.h
+        addon/ggml/BufferType.cpp
+        addon/ggml/BufferType.h
+        addon/ggml/Buffer.cpp
+        addon/ggml/Buffer.h
 )
 
 file(GLOB ML_SOURCES

@@ -1,6 +1,8 @@
 #include "Backend.h"
 
-#include "BackendDevice.h"
+#include "Buffer.h"
+#include "BufferType.h"
+#include "Device.h"
 #include "CGraph.h"
 
 
@@ -16,11 +18,10 @@ Napi::FunctionReference Backend::constructor;
 
 void Backend::Init(Napi::Env env, Napi::Object exports)
 {
-    Napi::Function func = DefineClass(env, "GgmlBackend", {
+    Napi::Function func = DefineClass(env, "Backend", {
             InstanceAccessor("guid", &Backend::GetGuid, nullptr),
             InstanceAccessor("name", &Backend::GetName, nullptr),
             InstanceAccessor("defaultBufferType", &Backend::GetDefaultBufferType, nullptr),
-            InstanceAccessor("allocBuffer", &Backend::GetAllocBuffer, nullptr),
             InstanceAccessor("alignment", &Backend::GetAlignment, nullptr),
             InstanceAccessor("maxSize", &Backend::GetMaxSize, nullptr),
             InstanceAccessor("device", &Backend::GetDevice, nullptr),
@@ -35,10 +36,11 @@ void Backend::Init(Napi::Env env, Napi::Object exports)
             InstanceMethod("computePlan", &Backend::ComputePlan),
             InstanceMethod("computeGraph", &Backend::ComputeGraph),
             InstanceMethod("computeGraphAsync", &Backend::ComputeGraphAsync),
+            InstanceMethod("allocBuffer", &Backend::AllocBuffer),
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
-    exports.Set("GgmlBackend", func);
+    exports.Set("Backend", func);
 }
 
 Backend::~Backend()
@@ -62,12 +64,17 @@ Napi::Value Backend::GetName(const Napi::CallbackInfo& info)
 
 Napi::Value Backend::GetDefaultBufferType(const Napi::CallbackInfo& info)
 {
-    return Napi::Object::New(info.Env());
+    const auto bufferType = ggml_backend_get_default_buffer_type(backend);
+    const auto wrapper = BufferType::From(info, bufferType);
+    return wrapper->Value();
 }
 
-Napi::Value Backend::GetAllocBuffer(const Napi::CallbackInfo& info)
+Napi::Value Backend::AllocBuffer(const Napi::CallbackInfo& info)
 {
-    return Napi::Object::New(info.Env());
+    const auto size = info[0].As<Napi::Number>().Uint32Value();
+    const auto buffer = ggml_backend_alloc_buffer(backend, size);
+    const auto bufferWrapper = Buffer::From(info, buffer);
+    return bufferWrapper->Value();
 }
 
 void Backend::SetTensorAsync(const Napi::CallbackInfo& info)
@@ -150,10 +157,18 @@ Napi::Value Backend::ComputeGraphAsync(const Napi::CallbackInfo& info)
 Napi::Value Backend::GetDevice(const Napi::CallbackInfo& info)
 {
     const auto dev_t = ggml_backend_get_device(backend);
-    const auto devObj = BackendDevice::constructor.New({});
-    const auto devWrapper = Napi::ObjectWrap<BackendDevice>::Unwrap(devObj);
+    const auto devObj = Device::constructor.New({});
+    const auto devWrapper = Napi::ObjectWrap<Device>::Unwrap(devObj);
     devWrapper->backend = backend;
     devWrapper->dev = dev_t;
 
     return devObj;
+}
+
+Backend* Backend::From(const Napi::CallbackInfo& info, ggml_backend_t ggml_backend)
+{
+    const auto obj = Napi::Object::New(info.Env());
+    const auto wrapper = Napi::ObjectWrap<Backend>::Unwrap(obj);
+    wrapper->backend = ggml_backend;
+    return wrapper;
 }

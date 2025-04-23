@@ -6,7 +6,7 @@
 #define GGML_H
 #include <napi.h>
 
-#include "BackendDevice.h"
+#include "Device.h"
 
 class GGML: public Napi::ObjectWrap<GGML>
 {

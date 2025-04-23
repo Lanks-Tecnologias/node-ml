@@ -29,8 +29,8 @@ void GGML::Init(Napi::Env env, Napi::Object exports)
         const Napi::Env env = info.Env();
         const auto index = info[0].As<Napi::Number>();
         auto device = ggml_backend_dev_get(index.Int32Value());
-        Napi::Object obj = BackendDevice::constructor.New({});
-        BackendDevice* instance = Napi::ObjectWrap<BackendDevice>::Unwrap(obj);
+        Napi::Object obj = Device::constructor.New({});
+        Device* instance = Napi::ObjectWrap<Device>::Unwrap(obj);
         instance->dev = device;
         return obj;
     }));

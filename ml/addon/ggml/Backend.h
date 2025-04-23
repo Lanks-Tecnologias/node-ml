@@ -11,6 +11,7 @@ class Backend : public Napi::ObjectWrap<Backend>
 public:
     static Napi::FunctionReference constructor;
     static void Init(Napi::Env env, Napi::Object exports);
+    static Backend* From(const Napi::CallbackInfo& info, ggml_backend_t ggml_backend);
     Backend(const Napi::CallbackInfo& info);
     ~Backend();
     ggml_backend_t backend = nullptr;
@@ -19,7 +20,7 @@ public:
     Napi::Value GetGuid(const Napi::CallbackInfo& info);
     Napi::Value GetName(const Napi::CallbackInfo& info);
     Napi::Value GetDefaultBufferType(const Napi::CallbackInfo& info);
-    Napi::Value GetAllocBuffer(const Napi::CallbackInfo& info);
+    Napi::Value AllocBuffer(const Napi::CallbackInfo& info);
     void SetTensorAsync(const Napi::CallbackInfo& info);
     void GetTensorAsync(const Napi::CallbackInfo& info);
     void SetTensor(const Napi::CallbackInfo& info);
