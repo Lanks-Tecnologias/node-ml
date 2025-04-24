@@ -48,6 +48,10 @@ set(SOURCES
         addon/ggml/BufferType.h
         addon/ggml/Buffer.cpp
         addon/ggml/Buffer.h
+        addon/ggml/Plan.cpp
+        addon/ggml/Plan.h
+        addon/ggml/GGUF.cpp
+        addon/ggml/GGUF.h
 )
 
 file(GLOB ML_SOURCES

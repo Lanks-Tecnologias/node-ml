@@ -4,6 +4,7 @@
 #include "BufferType.h"
 #include "Device.h"
 #include "CGraph.h"
+#include "Plan.h"
 
 
 //
@@ -119,22 +120,28 @@ void Backend::Synchronize(const Napi::CallbackInfo& info)
 
 Napi::Value Backend::CreateGraphPlan(const Napi::CallbackInfo& info)
 {
-    return Napi::Object::New(info.Env());
+    const auto cgraphObj = info[0].As<Napi::Object>(); // [ cgraph
+    const auto cgraph = Napi::ObjectWrap<CGraph>::Unwrap(cgraphObj);
+    const auto plan_t = ggml_backend_graph_plan_create(backend, cgraph->graph);
+    const auto planObj = Napi::Object::New(info.Env());
+    const auto wrapper = Napi::ObjectWrap<Plan>::Unwrap(planObj);
+    wrapper->plan = plan_t;
+    return planObj;
 }
 
 void Backend::FreeGraphPlan(const Napi::CallbackInfo& info)
 {
     const auto cgraphObj = info[0].As<Napi::Object>(); // [ cgraph
-    const auto cgraph = Napi::ObjectWrap<CGraph>::Unwrap(cgraphObj);
-    ggml_backend_graph_plan_free(backend, cgraph->graph);
+    const auto plan = Napi::ObjectWrap<Plan>::Unwrap(cgraphObj);
+    ggml_backend_graph_plan_free(backend, plan->plan);
 }
 
 Napi::Value Backend::ComputePlan(const Napi::CallbackInfo& info)
 {
-    const auto cgraphObj = info[0].As<Napi::Object>(); // [ cgraph
-    const auto cgraph = Napi::ObjectWrap<CGraph>::Unwrap(cgraphObj);
+    const auto planObj = info[0].As<Napi::Object>(); // [ cgraph
+    const auto plan = Napi::ObjectWrap<Plan>::Unwrap(planObj);
 
-    const auto status = ggml_backend_graph_plan_compute(backend, cgraph->graph);
+    const auto status = ggml_backend_graph_plan_compute(backend, plan->plan);
     return Napi::Number::New(info.Env(), status);
 }
 

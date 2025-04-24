@@ -46,3 +46,5 @@ const scheduler = new Scheduler({
     parallel: true
 })
 
+console.log(`${scheduler.nBackends}`)
+

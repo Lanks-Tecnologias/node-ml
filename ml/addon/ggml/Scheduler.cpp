@@ -136,14 +136,15 @@ Napi::ObjectWrap<Scheduler>(info)
     const auto backendCount = backends.Length();
     const auto graphSize = options.Get("graphSize").As<Napi::Number>().Uint32Value();
     const auto parallel = options.Get("parallel").As<Napi::Boolean>().Value();
-    std::vector<ggml_backend_t> backends_vec(backendCount);
-    std::vector<ggml_backend_buffer_type_t> bufts_vec(backendCount);
+    std::vector<ggml_backend_t> backends_vec{};
+    std::vector<ggml_backend_buffer_type_t> bufts_vec{};
 
     for (size_t i = 0; i < backendCount; ++i)
     {
         const auto backEndObj = backends.Get(i).As<Napi::Object>();
         const auto wrapper = Napi::ObjectWrap<Backend>::Unwrap(backEndObj);
         backends_vec.push_back(wrapper->backend);
+        bufts_vec.push_back(ggml_backend_get_default_buffer_type(wrapper->backend));
     }
     scheduler = ggml_backend_sched_new(backends_vec.data(), bufts_vec.data(),static_cast<int>(backendCount), graphSize, parallel);
 }
