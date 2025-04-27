@@ -54,6 +54,25 @@ void GGUFContext::Init(Napi::Env env, Napi::Object exports)
         InstanceAccessor("alignment", &GGUFContext::GetAlignment, nullptr),
         InstanceAccessor("dataOffset", &GGUFContext::GetDataOffset, nullptr),
         InstanceAccessor("nKV", &GGUFContext::GetNKeyValue, nullptr),
+        InstanceMethod("findKey", &GGUFContext::FindKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKeyValueType", &GGUFContext::GetKeyValueType),
+        InstanceMethod("getArrayType", &GGUFContext::GetArrayType),
+        InstanceMethod("getValU8", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
+        InstanceMethod("getKey", &GGUFContext::GetKey),
     });
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
@@ -63,6 +82,11 @@ void GGUFContext::Init(Napi::Env env, Napi::Object exports)
 GGUFContext::GGUFContext(const Napi::CallbackInfo& info): Napi::ObjectWrap<GGUFContext>(info)
 {
     ctx = nullptr;
+}
+
+GGUFContext::~GGUFContext()
+{
+    gguf_free(ctx);
 }
 
 Napi::Value GGUFContext::GetVersion(const Napi::CallbackInfo& info)
@@ -84,4 +108,25 @@ Napi::Value GGUFContext::GetNKeyValue(const Napi::CallbackInfo& info)
 {
     return Napi::Number::New(info.Env(), static_cast<double>(gguf_get_n_kv(ctx)));
 }
+
+Napi::Value GGUFContext::FindKey(const Napi::CallbackInfo& info)
+{
+    return Napi::Number::New(info.Env(), static_cast<double>(gguf_find_key(ctx, info[0].As<Napi::String>().Utf8Value().c_str())));
+}
+
+Napi::Value GGUFContext::GetKey(const Napi::CallbackInfo& info)
+{
+    return Napi::String::New(info.Env(), gguf_get_key(ctx, info[0].As<Napi::Number>().Int64Value()));
+}
+
+Napi::Value GGUFContext::GetKeyValueType(const Napi::CallbackInfo& info)
+{
+    return Napi::Number::New(info.Env(), static_cast<double>(gguf_get_kv_type(ctx, info[0].As<Napi::Number>().Int64Value())));
+}
+
+Napi::Value GGUFContext::GetArrayType(const Napi::CallbackInfo& info)
+{
+    return Napi::Number::New(info.Env(), static_cast<double>(gguf_get_arr_type(ctx, info[0].As<Napi::Number>().Int64Value())));
+}
+
 

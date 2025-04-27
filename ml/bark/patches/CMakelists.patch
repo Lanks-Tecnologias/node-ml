@@ -1,7 +1,16 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9db17c6..9124358 100644
+index 9db17c6..1980e2e 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.12)
+ project("bark" C CXX)
+ 
+-set(BARK_BUILD_EXAMPLES ON)
++#set(BARK_BUILD_EXAMPLES ON)
+ 
+ if (NOT XCODE AND NOT MSVC AND NOT CMAKE_BUILD_TYPE)
+     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 @@ -18,7 +18,7 @@ endif()
  
  set(BARK_LIB bark)

@@ -1,17 +1,25 @@
 diff --git a/encodec.cpp b/encodec.cpp
-index 17d2690..62628d1 100644
+index 17d2690..c74668c 100644
 --- a/encodec.cpp
 +++ b/encodec.cpp
-@@ -1,7 +1,7 @@
+@@ -1,15 +1,8 @@
  #include "ggml-alloc.h"
  #include "ggml-backend.h"
  #include "ggml.h"
 -#include "ggml/src/ggml-impl.h"
-+#include "ggml-impl.h"
++#include "../../ggml/ggml/src/ggml-impl.h"
  
- #ifdef GGML_USE_CUBLAS
- #include "ggml-cuda.h"
-@@ -25,6 +25,8 @@
+-#ifdef GGML_USE_CUBLAS
+-#include "ggml-cuda.h"
+-#endif
+-
+-#ifdef GGML_USE_METAL
+-#include "ggml-metal.h"
+-#endif
+ 
+ #include <cassert>
+ #include <cmath>
+@@ -25,6 +18,8 @@
  
  #include "encodec.h"
  
@@ -20,3 +28,68 @@ index 17d2690..62628d1 100644
  #include "decoder.h"
  #include "encoder.h"
  #include "lstm.h"
+@@ -138,7 +133,7 @@ struct encodec_context {
+     encodec_statistics stats;
+ };
+ 
+-bool encodec_load_model_weights(std::ifstream &infile, encodec_model &model, int n_gpu_layers) {
++bool encodec_load_model_weights(std::ifstream &infile, encodec_model &model, int n_gpu_layers, ggml_backend_t backend) {
+     // verify magic (i.e. ggml signature in hex format)
+     {
+         uint32_t magic;
+@@ -209,26 +204,9 @@ bool encodec_load_model_weights(std::ifstream &infile, encodec_model &model, int
+         }
+     }
+ 
+-#ifdef GGML_USE_CUBLAS
+-    if (n_gpu_layers > 0) {
+-        fprintf(stderr, "%s: using CUDA backend\n", __func__);
+-        model.backend = ggml_backend_cuda_init();
+-        if (!model.backend) {
+-            fprintf(stderr, "%s: ggml_backend_cuda_init() failed\n", __func__);
+-        }
+-    }
+-#endif
+-
+-#ifdef GGML_USE_METAL
+-    if (n_gpu_layers > 0) {
+-        fprintf(stderr, "%s: using Metal backend\n", __func__);
+-        model.backend = ggml_backend_metal_init();
+-        if (!model.backend) {
+-            fprintf(stderr, "%s: ggml_backend_metal_init() failed\n", __func__);
+-        }
+-    }
+-#endif
+ 
++
++    model.backend = backend;
+     if (!model.backend) {
+         // fallback to CPU backend
+         fprintf(stderr, "%s: using CPU backend\n", __func__);
+@@ -466,7 +444,7 @@ bool encodec_load_model_weights(std::ifstream &infile, encodec_model &model, int
+             }
+ 
+             if (tensor->ne[0] != ne[0] || tensor->ne[1] != ne[1] || tensor->ne[2] != ne[2]) {
+-                fprintf(stderr, "%s: tensor '%s' has wrong shape in model file: got [%lld, %lld, %lld], expected [%d, %d, %d]\n",
++                fprintf(stderr, "%s: tensor '%s' has wrong shape in model file: got [%ld, %ld, %ld], expected [%d, %d, %d]\n",
+                         __func__, name.data(), tensor->ne[0], tensor->ne[1], tensor->ne[2], ne[0], ne[1], ne[2]);
+                 return false;
+             }
+@@ -930,7 +908,7 @@ bool encodec_decompress_audio(struct encodec_context *ectx, const int32_t *codes
+ //    model, hence the model is loaded from the offset. This is the case for Bark.
+ // Note that we used to have an encodec_load_model taking a reference to a file stream
+ // but it was removed to comply the C-header requirements.
+-struct encodec_context *encodec_load_model(const char* model_path, const int offset, int n_gpu_layers) {
++struct encodec_context *encodec_load_model(const char* model_path, const int offset, int n_gpu_layers, ggml_backend_t backend) {
+     int64_t t_start_load_us = ggml_time_us();
+ 
+     auto infile = std::ifstream(model_path, std::ios::binary);
+@@ -946,7 +924,7 @@ struct encodec_context *encodec_load_model(const char* model_path, const int off
+     struct encodec_context *ectx = new encodec_context();
+ 
+     ectx->model = encodec_model();
+-    if (!encodec_load_model_weights(infile, ectx->model, n_gpu_layers)) {
++    if (!encodec_load_model_weights(infile, ectx->model, n_gpu_layers, backend)) {
+         fprintf(stderr, "%s: failed to load model weights from '%s'\n", __func__, model_path);
+         return {};
+     }

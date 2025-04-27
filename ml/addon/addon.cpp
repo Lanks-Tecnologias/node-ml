@@ -4,6 +4,7 @@
 #include "napi.h"
 #include <node.h>
 
+#include "Bark.h"
 #include "ggml/Backend.h"
 #include "ggml/GGML.h"
 #include "ggml/Device.h"
@@ -12,6 +13,7 @@
 #include "ggml/BufferType.h"
 #include "ggml/CGraph.h"
 #include "ggml/Context.h"
+#include "ggml/GGUF.h"
 #include "ggml/GraphPlan.h"
 #include "ggml/InitParams.h"
 #include "ggml/Scheduler.h"
@@ -31,6 +33,9 @@ Napi::Object  Initialize(Napi::Env env, Napi::Object exports) {
     Scheduler::Init(env, exports);
     BufferType::Init(env, exports);
     Buffer::Init(env, exports);
+    GGUF::Init(env, exports);
+    GGUFContext::Init(env, exports);
+    Bark::Init(env, exports);
     return exports;
 }
 

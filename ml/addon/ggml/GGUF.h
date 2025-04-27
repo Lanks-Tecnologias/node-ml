@@ -23,13 +23,17 @@ class GGUFContext: public Napi::ObjectWrap<GGUFContext>
     public:
         static Napi::FunctionReference constructor;
         static void Init(Napi::Env env, Napi::Object exports);
-        GGUFContext(const Napi::CallbackInfo& info);
+        explicit GGUFContext(const Napi::CallbackInfo& info);
         ~GGUFContext();
         struct gguf_context* ctx;
         Napi::Value GetVersion(const Napi::CallbackInfo& info);
         Napi::Value GetAlignment(const Napi::CallbackInfo& info);
         Napi::Value GetDataOffset(const Napi::CallbackInfo& info);
         Napi::Value GetNKeyValue(const Napi::CallbackInfo& info);
+        Napi::Value FindKey(const Napi::CallbackInfo& info);
+        Napi::Value GetKey(const Napi::CallbackInfo& info);
+        Napi::Value GetKeyValueType(const Napi::CallbackInfo& info);
+        Napi::Value GetArrayType(const Napi::CallbackInfo& info);
 };
 
 

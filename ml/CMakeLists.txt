@@ -7,19 +7,27 @@ set(BUILD_SHARED_LIBS_DEFAULT ON)
 set(BUILD_SHARED_LIBS ON)
 set(GGML_CUDA ON)
 #set(SD_CUDA ON)
+set(BARK_BUILD_EXAMPLES OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 execute_process(COMMAND node -p "require('node-addon-api').include.slice(1,-1)"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE NODE_ADDON_API_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-include_directories(${NODE_ADDON_API_DIR} ${CMAKE_JS_INC})
+include_directories(${NODE_ADDON_API_DIR}
+        ${CMAKE_JS_INC}
+        ggml/ggml
+        ggml/ggml/src
+        bark/bark.cpp
+        encodec/encodec.cpp
+
+)
 
 add_subdirectory(ggml)
-#add_subdirectory(encodec)
-#add_subdirectory(bark)
-#add_subdirectory(whisper)
+add_subdirectory(encodec)
+add_subdirectory(bark)
+add_subdirectory(whisper)
 add_subdirectory(llama)
-#add_subdirectory(stable-diffusion)
+add_subdirectory(stable-diffusion)
 
 set(SOURCES
         addon/addon.cpp
@@ -52,6 +60,16 @@ set(SOURCES
         addon/ggml/Plan.h
         addon/ggml/GGUF.cpp
         addon/ggml/GGUF.h
+        addon/Llama.cpp
+        addon/Llama.h
+        addon/StableDiffusion.cpp
+        addon/StableDiffusion.h
+        addon/Bark.cpp
+        addon/Bark.h
+        addon/Encodec.cpp
+        addon/Encodec.h
+        addon/Whisper.cpp
+        addon/Whisper.h
 )
 
 file(GLOB ML_SOURCES
@@ -63,9 +81,9 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES})
 # Nome da lib que será carregada pelo require()
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 #target_link_libraries(${PROJECT_NAME} PUBLIC
-#        ggml
-#        llama
-#        ${SD_LIB}
+##        ggml
+##        llama
+##        ${SD_LIB}
 #        ${ENCODEC_LIB}
 #        ${BARK_LIB}
 #        whisper
@@ -75,14 +93,17 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_JS_INC}
         ggml/ggml/src
         ggml/ggml/include
+        encodec/encodec.cpp
+        bark/bark.cpp
 )
 target_link_libraries(${PROJECT_NAME}
         ${CMAKE_JS_LIB}
         ggml
+        encodec
+        whisper
+        bark
+        stable-diffusion
         llama
-        ${SD_LIB}
-        #whisper
-       # ${BARK_LIB}
 )
 
 
