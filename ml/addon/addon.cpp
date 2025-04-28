@@ -5,6 +5,8 @@
 #include <node.h>
 
 #include "Bark.h"
+#include "Llama.h"
+#include "StableDiffusion.h"
 #include "ggml/Backend.h"
 #include "ggml/GGML.h"
 #include "ggml/Device.h"
@@ -36,6 +38,8 @@ Napi::Object  Initialize(Napi::Env env, Napi::Object exports) {
     GGUF::Init(env, exports);
     GGUFContext::Init(env, exports);
     Bark::Init(env, exports);
+    Llama::Init(env, exports);
+    StableDiffusion::Init(env, exports);
     return exports;
 }
 

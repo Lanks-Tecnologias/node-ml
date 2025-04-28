@@ -19,7 +19,9 @@ include_directories(${NODE_ADDON_API_DIR}
         ggml/ggml/src
         bark/bark.cpp
         encodec/encodec.cpp
-
+        llama/llama.cpp/include
+        stable-diffusion/stable-diffusion.cpp
+        stable-diffusion/stable-diffusion.cpp/thirdparty
 )
 
 add_subdirectory(ggml)
@@ -95,6 +97,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ggml/ggml/include
         encodec/encodec.cpp
         bark/bark.cpp
+        llama/llama.cpp/include
+        stable-diffusion/stable-diffusion.cpp
+        stable-diffusion/stable-diffusion.cpp/thirdparty
 )
 target_link_libraries(${PROJECT_NAME}
         ${CMAKE_JS_LIB}
