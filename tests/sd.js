@@ -17,4 +17,4 @@ sd.textToImage({
     seed: 1718337456
 })
 
-sd.saveImageToPng(0, "output.png")
+sd.saveImageToPng(0, `output-${Date.now()}.png`)

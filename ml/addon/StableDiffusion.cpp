@@ -7,6 +7,7 @@
 #include "stb_image_write.h"
 #include "StableDiffusion.h"
 
+#include "ggml-backend.h"
 #include "stable-diffusion.h"
 
 Napi::FunctionReference StableDiffusion::constructor;
@@ -32,6 +33,7 @@ StableDiffusion::StableDiffusion(const Napi::CallbackInfo& info): Napi::ObjectWr
     {
         device = options.Get("device").As<Napi::Number>();
     }
+
     if (!options.Has("modelPath"))
     {
         Napi::TypeError::New(info.Env(), "Missing modelPath").ThrowAsJavaScriptException();
@@ -54,10 +56,11 @@ StableDiffusion::StableDiffusion(const Napi::CallbackInfo& info): Napi::ObjectWr
     const std::string ctrNetPath;
     const std::string loraPath;
     const std::string embedDir;
+
     context = new_sd_ctx(modelPath.c_str(), clip_l_Path.c_str(), clip_g_Path.c_str(), "",
     diffusionModelPath.c_str(), vaePath.c_str(), taePath.c_str(), ctrNetPath.c_str(),
         loraPath.c_str(), embedDir.c_str(), "", true, true, false, 16, sd_type_t::SD_TYPE_F32,
-        rng_type_t::STD_DEFAULT_RNG, DEFAULT, false, true, false, true
+        rng_type_t::STD_DEFAULT_RNG, DEFAULT, false, true, false, true, device
     )
     ;
 }
