@@ -1,0 +1,20 @@
+diff --git a/bark.h b/bark.h
+index e6426f8..fe11619 100644
+--- a/bark.h
++++ b/bark.h
+@@ -153,12 +153,14 @@ extern "C" {
+      * @param model_path The directory path of the bark model to load.
+      * @param params     The parameters to use for the Bark model.
+      * @param seed       The seed to use for random number generation.
++     * @param backend    The backend to load
+      * @return A pointer to the loaded bark model context.
+      */
+     BARK_API struct bark_context *bark_load_model(
+         const char *model_path,
+         struct bark_context_params params,
+-        uint32_t seed);
++        uint32_t seed,
++        ggml_backend_t backend);
+ 
+     /**
+      * Generates an audio file from the given text using the specified Bark context.

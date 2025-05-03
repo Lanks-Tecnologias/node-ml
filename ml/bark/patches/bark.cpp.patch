@@ -1,0 +1,142 @@
+diff --git a/bark.cpp b/bark.cpp
+index 6e99d99..8c75cdf 100644
+--- a/bark.cpp
++++ b/bark.cpp
+@@ -23,6 +23,9 @@
+ #include <vector>
+ 
+ #include "bark.h"
++
++#include <ggml-cpu.h>
++
+ #include "encodec.h"
+ 
+ #define BARK_MAX_NODES 4096
+@@ -175,7 +178,7 @@ static void write_safe(std::ofstream& fout, T& dest) {
+ 
+ static void bark_print_statistics(gpt_model* model) {
+     printf("\n\n");
+-    printf("%s:   sample time = %8.2f ms / %lld tokens\n", __func__, model->t_sample_us / 1000.0f, model->n_sample);
++    printf("%s:   sample time = %8.2f ms / %ld tokens\n", __func__, model->t_sample_us / 1000.0f, model->n_sample);
+     printf("%s:  predict time = %8.2f ms / %.2f ms per token\n", __func__, model->t_predict_us / 1000.0f, model->t_predict_us / model->n_sample / 1000.0f);
+     printf("%s:    total time = %8.2f ms\n", __func__, model->t_main_us / 1000.0f);
+     printf("\n");
+@@ -303,9 +306,9 @@ static bool ggml_quantize_weights(
+         case GGML_FTYPE_MOSTLY_IQ4_XS:
+         case GGML_FTYPE_MOSTLY_IQ1_M:
+         case GGML_FTYPE_MOSTLY_BF16:
+-        case GGML_FTYPE_MOSTLY_Q4_0_4_4:
+-        case GGML_FTYPE_MOSTLY_Q4_0_4_8:
+-        case GGML_FTYPE_MOSTLY_Q4_0_8_8:
++        // case GGML_FTYPE_MOSTLY_Q4_0_4_4:
++        // case GGML_FTYPE_MOSTLY_Q4_0_4_8:
++        // case GGML_FTYPE_MOSTLY_Q4_0_8_8:
+                 {
+                     fprintf(stderr, "%s: invalid model type %d\n", __func__, ftype);
+                     return false;
+@@ -446,9 +449,9 @@ static bool ggml_quantize_weights(
+                 case GGML_TYPE_IQ4_XS:
+                 case GGML_TYPE_IQ1_M:
+                 case GGML_TYPE_BF16:
+-                case GGML_TYPE_Q4_0_4_4:
+-                case GGML_TYPE_Q4_0_4_8:
+-                case GGML_TYPE_Q4_0_8_8:
++                // case GGML_TYPE_Q4_0_4_4:
++                // case GGML_TYPE_Q4_0_4_8:
++                // case GGML_TYPE_Q4_0_8_8:
+                 case GGML_TYPE_TQ1_0:
+                 case GGML_TYPE_TQ2_0:
+                 case GGML_TYPE_COUNT:
+@@ -692,7 +695,8 @@ static bool bark_vocab_load(std::ifstream & fin, bark_vocab * vocab) {
+ static bool bark_model_load(std::ifstream & fin,
+                             gpt_model     & model,
+                             int             n_gpu_layers,
+-                            bark_verbosity_level verbosity) {
++                            bark_verbosity_level verbosity,
++                            ggml_backend_t   backend) {
+     // load hparams
+     {
+         auto & hparams = model.hparams;
+@@ -820,26 +824,7 @@ static bool bark_model_load(std::ifstream & fin,
+         }
+     }
+ 
+-#ifdef GGML_USE_CUDA
+-    if (n_gpu_layers > 0) {
+-        fprintf(stderr, "%s: using CUDA backend\n", __func__);
+-        model.backend = ggml_backend_cuda_init();
+-        if (!model.backend) {
+-            fprintf(stderr, "%s: ggml_backend_cuda_init() failed\n", __func__);
+-        }
+-    }
+-#endif
+-
+-#ifdef GGML_USE_METAL
+-    if (n_gpu_layers > 0) {
+-        fprintf(stderr, "%s: using Metal backend\n", __func__);
+-        model.backend = ggml_backend_metal_init();
+-        if (!model.backend) {
+-            fprintf(stderr, "%s: ggml_backend_metal_init() failed\n", __func__);
+-        }
+-    }
+-#endif
+-
++    model.backend = backend;
+     if (!model.backend) {
+         // fallback to CPU backend
+         if (verbosity == bark_verbosity_level::HIGH) {
+@@ -1080,7 +1065,8 @@ static bool bark_model_load(std::ifstream & fin,
+ static bool bark_load_model_from_file(
+     const std::string    & fname,
+     struct bark_context  * bctx,
+-    bark_verbosity_level   verbosity) {
++    bark_verbosity_level   verbosity,
++    ggml_backend_t         backend) {
+     if (verbosity == bark_verbosity_level::MEDIUM || verbosity == bark_verbosity_level::HIGH) {
+         printf("%s: loading model from '%s'\n", __func__, fname.c_str());
+     }
+@@ -1121,7 +1107,7 @@ static bool bark_load_model_from_file(
+             printf("%s: reading bark text model\n", __func__);
+         }
+ 
+-        if (!bark_model_load(fin, bctx->text_model.semantic_model, n_gpu_layers, verbosity)) {
++        if (!bark_model_load(fin, bctx->text_model.semantic_model, n_gpu_layers, verbosity, backend)) {
+             fprintf(stderr, "%s: invalid model file '%s' (bad text)\n", __func__, fname.c_str());
+             return false;
+         }
+@@ -1129,7 +1115,7 @@ static bool bark_load_model_from_file(
+ 
+     // coarse
+     {
+-        if (!bark_model_load(fin, bctx->text_model.coarse_model, n_gpu_layers, verbosity)) {
++        if (!bark_model_load(fin, bctx->text_model.coarse_model, n_gpu_layers, verbosity, backend)) {
+             fprintf(stderr, "%s: invalid model file '%s' (bad coarse)\n", __func__, fname.c_str());
+             return false;
+         }
+@@ -1137,7 +1123,7 @@ static bool bark_load_model_from_file(
+ 
+     // fine
+     {
+-        if (!bark_model_load(fin, bctx->text_model.fine_model, n_gpu_layers, verbosity)) {
++        if (!bark_model_load(fin, bctx->text_model.fine_model, n_gpu_layers, verbosity, backend)) {
+             fprintf(stderr, "%s: invalid model file '%s' (bad fine)\n", __func__, fname.c_str());
+             return false;
+         }
+@@ -1162,7 +1148,7 @@ static bool bark_load_model_from_file(
+     return true;
+ }
+ 
+-struct bark_context* bark_load_model(const char* model_path, struct bark_context_params params, uint32_t seed) {
++struct bark_context* bark_load_model(const char* model_path, struct bark_context_params params, uint32_t seed, ggml_backend_t backend) {
+     ggml_time_init();
+     int64_t t_load_start_us = ggml_time_us();
+ 
+@@ -1171,7 +1157,7 @@ struct bark_context* bark_load_model(const char* model_path, struct bark_context
+     bctx->text_model = bark_model();
+ 
+     std::string model_path_str(model_path);
+-    if (!bark_load_model_from_file(model_path_str, bctx, params.verbosity)) {
++    if (!bark_load_model_from_file(model_path_str, bctx, params.verbosity, backend)) {
+         fprintf(stderr, "%s: failed to load model weights from '%s'\n", __func__, model_path);
+         return nullptr;
+     }
