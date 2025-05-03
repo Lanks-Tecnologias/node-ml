@@ -73,11 +73,10 @@ Bark::Bark(const Napi::CallbackInfo& info): Napi::ObjectWrap<Bark>(info)
     this->seed = obj.Has("seed") ? obj.Get("seed").As<Napi::Number>().Int32Value() : 0;
     ggml_backend_load_all();
     const auto devIndex = obj.Has("device") ? obj.Get("device").As<Napi::Number>().Int32Value() : 0;
-    const auto dev = ggml_backend_dev_get(devIndex);
-    const auto backend  = ggml_backend_dev_init(dev, nullptr);
+
     struct bark_context_params ctx_params = bark_context_default_params();
     ctx_params.verbosity = HIGH;
-    this->context = bark_load_model(model_path.c_str(),ctx_params, seed, backend);
+    this->context = bark_load_model(model_path.c_str(),ctx_params, seed, devIndex);
     if (!context) {
         Napi::TypeError::New(info.Env(), "Could not load model\n").ThrowAsJavaScriptException();
         return;

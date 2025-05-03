@@ -2,8 +2,8 @@
 // Created by denis.montes on 26/04/25.
 //
 
-#ifndef ENCODEC_H
-#define ENCODEC_H
+#ifndef ADDON_ENCODEC_H
+#define ADDON_ENCODEC_H
 #include <napi.h>
 #include "encodec.h"
 
@@ -18,4 +18,4 @@ public:
 
 
 
-#endif //ENCODEC_H
+#endif //ADDON_ENCODEC_H

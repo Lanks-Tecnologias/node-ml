@@ -72,6 +72,7 @@ set(SOURCES
         addon/Encodec.h
         addon/Whisper.cpp
         addon/Whisper.h
+        addon/thirdparty/dr_wav.h
 )
 
 file(GLOB ML_SOURCES

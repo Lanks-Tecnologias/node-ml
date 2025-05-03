@@ -2,8 +2,8 @@
 // Created by denis.montes on 26/04/25.
 //
 
-#ifndef BARK_H
-#define BARK_H
+#ifndef ADDON_BARK_H
+#define ADDON_BARK_H
 #include <napi.h>
 
 
@@ -22,4 +22,4 @@ public:
 
 
 
-#endif //BARK_H
+#endif //ADDON_BARK_H
