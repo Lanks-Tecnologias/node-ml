@@ -8,6 +8,7 @@
 #include "Encodec.h"
 #include "Llama.h"
 #include "StableDiffusion.h"
+#include "Upscaler.h"
 #include "Whisper.h"
 #include "ggml/Backend.h"
 #include "ggml/GGML.h"
@@ -45,6 +46,7 @@ Napi::Object  Initialize(Napi::Env env, Napi::Object exports) {
     StableDiffusion::Init(env, exports);
     Whisper::Init(env, exports);
     Encodec::Init(env, exports);
+    Upscaler::Init(env, exports);
     return exports;
 }
 

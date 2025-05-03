@@ -72,6 +72,8 @@ set(SOURCES
         addon/Encodec.h
         addon/Whisper.cpp
         addon/Whisper.h
+        addon/Upscaler.cpp
+        addon/Upscaler.h
         addon/thirdparty/dr_wav.h
 )
 
