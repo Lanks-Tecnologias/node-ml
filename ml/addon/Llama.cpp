@@ -6,7 +6,37 @@
 
 #include <iostream>
 
+void llama_log_callback(enum ggml_log_level level, const char * text, void * user_data)
+{
+    int tag_color;
+    const char* level_str;
+    //Upscaler* upscaler = (Upscaler*)data;
+    switch (level) {
+    case GGML_LOG_LEVEL_DEBUG:
+        tag_color = 37;
+        level_str = "DEBUG";
+        break;
+    case GGML_LOG_LEVEL_INFO:
+        tag_color = 34;
+        level_str = "INFO";
+        break;
+    case GGML_LOG_LEVEL_WARN:
+        tag_color = 35;
+        level_str = "WARN";
+        break;
+    case GGML_LOG_LEVEL_ERROR:
+        tag_color = 31;
+        level_str = "ERROR";
+        break;
+    default: /* Potential future-proofing */
+        tag_color = 33;
+        level_str = "";
+        printf("\033[%d;1m%s\033[0m",tag_color,text);
+        return;
+    }
 
+    printf("\033[%d;1m[llama][%-5s]\033[0m %s", tag_color, level_str, text);
+}
 Napi::FunctionReference Llama::constructor;
 Napi::Object Llama::Init(Napi::Env env, Napi::Object exports)
 {
@@ -15,18 +45,44 @@ Napi::Object Llama::Init(Napi::Env env, Napi::Object exports)
     });
     constructor.SuppressDestruct();
     exports.Set("Llama", func);
+
+    llama_backend_init();
     return exports;
 }
 
 Llama::Llama(const Napi::CallbackInfo& info): Napi::ObjectWrap<Llama>(info)
 {
     const auto options = info[0].As<Napi::Object>();
-    const auto device = options.Has("device") ? options.Get("device").As<Napi::Number>() : 0;
+    const auto device = options.Has("mainDevice") ? options.Get("mainDevice").As<Napi::Number>().Int32Value() : 0;
     const auto modelPath = options.Get("modelPath").As<Napi::String>();
+    ggml_backend_load_all();
+    llama_log_set(llama_log_callback, this);
     llama_model_params model_params = llama_model_default_params();
-    model_params.n_gpu_layers = options.Has("nGpuLayers") ? options.Get("nGpuLayers").As<Napi::Number>() : 99;
+    model_params.n_gpu_layers = options.Has("nGpuLayers") ? options.Get("nGpuLayers").As<Napi::Number>().Int32Value() : 99;
     model_params.main_gpu = device;
     model_params.split_mode = LLAMA_SPLIT_MODE_LAYER;
+    const auto devList = options.Has("devices") ? options.Get("devices").As<Napi::Array>() : Napi::Array::New(info.Env());
+    if (devList.Length() > 0)
+    {
+        auto itemCount = devList.Length() + 1;
+        model_params.devices = static_cast<ggml_backend_dev_t*>(malloc(sizeof(ggml_backend_dev_t) * itemCount));
+        for (int i = 0; i < devList.Length(); i++)
+        {
+            model_params.devices[i] = ggml_backend_dev_get(devList.Get(i).As<Napi::Number>().Int32Value());
+        }
+        model_params.devices[itemCount-1] = nullptr;
+    }else
+    {
+        const auto nDevices = ggml_backend_dev_count();
+        model_params.devices = static_cast<ggml_backend_dev_t*>(malloc(sizeof(ggml_backend_dev_t) * nDevices + 1));
+        for (int i = 0; i < nDevices; i++)
+        {
+            model_params.devices[i] = ggml_backend_dev_get(i);
+        }
+        model_params.devices[nDevices-1] = nullptr;
+    }
+
+    //model_params.devices = devices.data();
     model = llama_model_load_from_file(modelPath.Utf8Value().c_str(), model_params);
     this->vocab = llama_model_get_vocab(model);
     if (model == nullptr) {
