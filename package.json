@@ -1,12 +1,12 @@
 {
   "name": "node-ml",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Create and Run AI models locally on your machine",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "tsc --build tsconfig.json --force",
-    "clean": "rm -rf ./node_modules ./dist ./ml/build",
+    "clean": "rm -rf ./node_modules ./dist ./build",
     "configure": "npm install && npm run build",
     "reset-submodules": "rm .gitmodules && git rm -f --cached ./ml/ggml/ggml && git rm -f --cached ./ml/encodec/encodec.cpp && git rm -f --cached ./ml/bark/bark.cpp && git rm -f --cached ./ml/whisper/whisper.cpp && git rm -f --cached ./ml/llama/llama.cpp && git rm -f --cached ./ml/stable-diffusion/stable-diffusion.cpp",
     "reset": "rm -rf ./ml/ggml/ggml ./ml/encodec/encodec.cpp ./ml/bark/bark.cpp ./ml/whisper/whisper.cpp ./ml/llama/llama.cpp ./ml/stable-diffusion/stable-diffusion.cpp",

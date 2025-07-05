@@ -106,17 +106,17 @@ export const ConfigureCommand: CommandModule<object, ConfigureCommandArgs> = {
             fs.writeFileSync(`${currentDir}/.gitmodules`, '', { encoding: 'utf8' });
         }
         // Configure all repositories
-        await configureGgml(currentDir);
-        await configureEncodec(currentDir);
-        await configureBark(currentDir);
-        await configureWhisper(currentDir);
-        await configureLlama(currentDir);
-        await configureStableDiffusion(currentDir);
+        // await configureGgml(currentDir);
+        // await configureEncodec(currentDir);
+        // await configureBark(currentDir);
+        // await configureWhisper(currentDir);
+        // await configureLlama(currentDir);
+        // await configureStableDiffusion(currentDir);
 
         // Run cmake-js configuration
 
         if (args.debug){
-            const cmakeConfigureDebug = `npx cmake-js configure -D -d ${currentDir}/ml -O ${currentDir}/ml/build`;
+            const cmakeConfigureDebug = `npx cmake-js configure -D -d ${currentDir} -O ${currentDir}/dist`;
 
             exec(cmakeConfigureDebug, (error, stdout) => {
                 if (error) {
@@ -127,7 +127,7 @@ export const ConfigureCommand: CommandModule<object, ConfigureCommandArgs> = {
             });
 
         } else {
-            const cmakeConfigureRelease = `npx cmake-js configure -d ${currentDir}/ml -O ${currentDir}/ml/build`;
+            const cmakeConfigureRelease = `npx cmake-js configure -d ${currentDir} -O ${currentDir}/dist`;
 
             exec(cmakeConfigureRelease, (error, stdout) => {
                 if (error) {

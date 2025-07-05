@@ -2,7 +2,7 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const {
     Bark
-} = require("../ml/build/Debug/ml.node");
+} = require("../bin/index.js");
 
 const bark = new Bark({
     nThreads: 72,
