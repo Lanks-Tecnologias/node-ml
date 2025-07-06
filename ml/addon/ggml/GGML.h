@@ -16,6 +16,11 @@ public:
     GGML(const Napi::CallbackInfo& info);
     ~GGML();
 private:
-    //Napi::Value GetDeviceCount(const Napi::CallbackInfo& info);
+    static Napi::Value GetDeviceCount(const Napi::CallbackInfo& info);
+    static Napi::Value GetDevice(const Napi::CallbackInfo& info);
+    static Napi::Value InitApi(const Napi::CallbackInfo& info);
+    static Napi::Value FreeApi(const Napi::CallbackInfo& info);
+    static Napi::Value CreateGraph(const Napi::CallbackInfo& info);
+    static Napi::Value LoadAllBackends(const Napi::CallbackInfo& info);
 };
 #endif //GGML_H

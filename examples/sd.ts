@@ -1,7 +1,7 @@
-import ml from "../index.js"
+import ml from "../ml.js"
+console.log(ml)
 
-
-ml.loadAllBackends();
+ml.GGML.loadAllBackends();
 const sd = new ml.StableDiffusion({
     modelPath: process.argv[2],
     diffusionModelPath: process.argv[2],
